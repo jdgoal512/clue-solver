@@ -1,0 +1,67 @@
+------------
+| Suspects |
+------------
+
+SP - Professor Plum
+SM - Colonel Mustard
+SG - Mr. Green
+SS - Miss Scarlet
+SW - Ms. White
+SB - Mrs. Peacock
+
+
+----------
+| Weapon |
+----------
+
+WK - Knife
+WC - Candlestick
+WG - Revolver
+WL - Lead Pipe
+WR - Rope
+WW - Wrench
+
+
+--------
+| Room |
+--------
+
+RH - Hall
+RC - Conservatory
+RD - Dining Room
+RK - Kitchen
+RS - Study
+RL - Library
+RB - Ballroom
+RF - Lounge
+RP - Billiard Room
+
+
+
+
+
+
+
+Person
+
+NOT
+....
+...
+..
+
+MAY HAVE
+..... V ..... V ...... (Sugestion)
+
+HAS
+.....
+.....
+?
+
+NUMBER_OF_CARDS
+SOLVED_CARDS
+
+has_suggestion(Sugestion)
+does_not_have(Sugestion)
+has_new_card()
+get_cards()
+to_string()
