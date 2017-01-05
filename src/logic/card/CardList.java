@@ -16,15 +16,15 @@ public class CardList {
 	private ArrayList<Card> suspects;
 	private ArrayList<Card> weapons;
 	private ArrayList<Card> rooms;
-	private ArrayList<Card> all_cards;
+	private ArrayList<Card> allCards;
 	private CardList() {
 		suspects = new ArrayList<Card>();
 		weapons = new ArrayList<Card>();
 		rooms = new ArrayList<Card>();
-		all_cards = new ArrayList<Card>();
+		allCards = new ArrayList<Card>();
 
 		suspects.add(new Card(CardValue.PLUM, TypeOfCard.SUSPECT, "Professor Plum"));
-		suspects.add(new Card(CardValue.MUSTARD, TypeOfCard.SUSPECT, "Colonel Musard"));
+		suspects.add(new Card(CardValue.MUSTARD, TypeOfCard.SUSPECT, "Colonel Mustard"));
 		suspects.add(new Card(CardValue.GREEN, TypeOfCard.SUSPECT, "Mr. Green"));
 		suspects.add(new Card(CardValue.SCARLET, TypeOfCard.SUSPECT, "Miss Scarlet"));
 		suspects.add(new Card(CardValue.WHITE, TypeOfCard.SUSPECT, "Ms. White"));
@@ -48,79 +48,53 @@ public class CardList {
 		rooms.add(new Card(CardValue.BILLIARD_ROOM, TypeOfCard.ROOM, "Billiards Room"));
 
 		for (Card c : suspects) {
-			all_cards.add(c);
+			allCards.add(c);
 		}
 		for (Card c : weapons) {
-			all_cards.add(c);
+			allCards.add(c);
 		}
 		for (Card c : rooms) {
-			all_cards.add(c);
+			allCards.add(c);
 		}
 	}
 
 	public int getNumberOfCards() {
-		return all_cards.size();
+		return allCards.size();
 	}
 
-	public ArrayList<String> getAllCardNames() {
-		ArrayList<String> list = new ArrayList<String>();
-		for (Card c: all_cards) {
-			if (c.isKnown()) {
-				list.add("(" + c.getDescription() + ")");
-
-			} else {
-				list.add(c.getDescription());
-			}
-		}
-		return list;
-	}
-
-	public ArrayList<String> getRoomNames() {
-		ArrayList<String> list = new ArrayList<String>();
-		for (Card c: rooms) {
-			if (c.isKnown()) {
-				list.add("(" + c.getDescription() + ")");
-
-			} else {
-				list.add(c.getDescription());
-			}
-		}
-		return list;
-	}
 	public int getNumberOfRooms() {
 		return rooms.size();
-	}
-	public ArrayList<String> getSuspectNames() {
-		ArrayList<String> list = new ArrayList<String>();
-		for (Card c: suspects) {
-			if (c.isKnown()) {
-				list.add("(" + c.getDescription() + ")");
-			} else {
-				list.add(c.getDescription());
-			}
-		}
-		return list;
 	}
 
 	public int getNumberOfSuspects() {
 		return suspects.size();
-	}
-	public ArrayList<String> getWeaponNames() {
-		ArrayList<String> list = new ArrayList<String>();
-		for (Card c: weapons) {
-			if (c.isKnown()) {
-				list.add("(" + c.getDescription() + ")");
-			} else {
-				list.add(c.getDescription());
-			}
-		}
-		return list;
 	}
 
 	public int getNumberOfWeapons() {
 		return weapons.size();
 	}
 	public Card getCard(int cardNumber) {
-		return all_cards.get(cardNumber);
+		return allCards.get(cardNumber);
+	}
+	public Card getSuspect(int cardNumber) {
+		return suspects.get(cardNumber);
+	}
+	public Card getRoom(int cardNumber) {
+		return rooms.get(cardNumber);
+	}
+	public Card getWeapon(int cardNumber) {
+		return weapons.get(cardNumber);
+	}
+	public ArrayList<Card> getCards() {
+		return allCards;
+	}
+	public ArrayList<Card> getRooms() {
+		return rooms;
+	}
+	public ArrayList<Card> getWeapons() {
+		return weapons;
+	}
+	public ArrayList<Card> getSuspects() {
+		return suspects;
 	}
 }

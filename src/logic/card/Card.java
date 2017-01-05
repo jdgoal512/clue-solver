@@ -1,6 +1,7 @@
 package src.logic.card;
 
 public class Card {
+	public static Card unknown = new Card(CardValue.UNKNOWN, TypeOfCard.UNKNOWN, "Unknown");
 	private TypeOfCard cardType;
 	private CardValue cardValue;
 	private String description;
@@ -11,6 +12,21 @@ public class Card {
 		this.description = description;
 		known = false;
 	}
+	public Card(Card otherCard) {
+		cardType = otherCard.cardType;
+		cardValue = otherCard.cardValue;
+		description = otherCard.description;
+		known = false;
+	}
+
+	public CardValue getValue() {
+		return cardValue;
+	}
+
+	public TypeOfCard getType() {
+		return cardType;
+	}
+
 	public String getDescription() {
 		return description;
 	}

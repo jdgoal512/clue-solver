@@ -1,2 +1,2 @@
 # clue-solver
-Solves the board game Clue
+An assistant for solving the board game clue
