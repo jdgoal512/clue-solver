@@ -5,18 +5,31 @@ import java.util.ArrayList;
 import src.logic.card.*;
 import java.util.Iterator;
 
+/**
+ * Represents a player or solution in the game of clue
+ * Keeps a record of which cards it has, does not have, and suggestions it has said yes to
+**/
 public class Player {
+	//Variables
+	private String name; //The player's name
+	private HashSet<Card> knownCards; //Cards the player is known to have
+	private HashSet<Card> possibleCards; //Cards that are still not known whether the player has it or not
+	private HashSet<Card> cardsNotPossible; //Cards a player is known not to have
+	private ArrayList<HashSet<Card>> possibleSuggestions; //Suggestions the player has said yes to
+	private int numberOfCards; //How many cards the player has
+	private boolean solved; //Whether or not all cards the player can have are known or not
+
+	//List of what status a card may have relative to a player
 	public enum CardStatus {
 		KNOWN, NOT_POSSIBLE, POSSIBLE, UNKNOWN
 	}
-	private String name;
-	private HashSet<Card> knownCards;
-	private HashSet<Card> possibleCards;
-	private HashSet<Card> cardsNotPossible;
-	private ArrayList<HashSet<Card>> possibleSuggestions;
-	private int numberOfCards;
-	private boolean solved;
 
+	//Methods
+	/**
+	 * Creates a new player
+	 * @param name The player's name
+	 * @param numberOfCards The maximum number of cards the player can have
+	**/
 	public Player(String name, int numberOfCards) {
 		this.name = name;
 		this.numberOfCards = numberOfCards;
@@ -25,8 +38,8 @@ public class Player {
 		cardsNotPossible = new HashSet<Card>();
 		possibleSuggestions = new ArrayList<HashSet<Card>>();
 		solved = false;
-		ArrayList<Card> all_cards = CardList.getCardList().getCards();
-		for (Card c : all_cards) {
+		ArrayList<Card> allCards = CardList.getCardList().getCards();
+		for (Card c : allCards) {
 			possibleCards.add(c);
 		}
 	}
@@ -44,12 +57,17 @@ public class Player {
 		return false;
 	}
 
+	/**
+	 * Adds a known card to the player's hand
+	 * @param name The player's name
+	 * @param numberOfCards The maximum number of cards the player can have
+	**/
 	public void addCard(Card c) {
 		if (possibleCards.contains(c)) {
 			possibleCards.remove(c);
 		}
 		knownCards.add(c);
-		if (knownCards.size() == numberOfCards) { //Check if the user has all the cards they can_have_extra_card
+		if (knownCards.size() == numberOfCards) { //Check if the user has all the cards they can
 			while (possibleCards.size() != 0) { //Remove all other cards as possiblities if all cards are known
 				Card cardToRemove = possibleCards.iterator().next();
 				addCardNotPossible(cardToRemove);
@@ -65,20 +83,28 @@ public class Player {
 		}
 	}
 
+	/**
+	 * Gives the player's name
+	 * @return name A string containing the player's name
+	**/
 	public String getName() {
 		return name;
 	}
 
-	public void addCardNotPossible(Card c) {
-		if (possibleCards.contains(c)) {
-			possibleCards.remove(c);
-			cardsNotPossible.add(c);
-			removeFromSuggestions(c);
-			ClueLogic.getClueLogic().checkIfCardIsUnowned(c); //Check if no one owns that card
+	/**
+	 * Marks a card as not possible for the player to possess and removes the card from all suggestions
+	 * the player has said yes to
+	 * @param card The card to mark as impossible for the player to have
+	**/
+	public void addCardNotPossible(Card card) {
+		if (possibleCards.contains(card)) {
+			possibleCards.remove(card);
+			cardsNotPossible.add(card);
+			removeFromSuggestions(card);
+			ClueLogic.getClueLogic().checkIfCardIsUnowned(card); //Check if no one owns that card
 		}
-		//TODO: Make sure all cards except one of a type have not been found
 		ArrayList<Card> otherCards = null;
-		switch (c.getType()) {
+		switch (card.getType()) {
 			case ROOM:
 				otherCards = CardList.getCardList().getRooms();
 				break;
@@ -91,17 +117,20 @@ public class Player {
 			default:
 				System.out.println("Error");
 		}
-		//
-		HashSet<Card> unknownCards = new HashSet<Card>();
-		for (Card otherCard : otherCards) {
-			if (!otherCard.isKnown()) {
-				unknownCards.add(otherCard);
-			}
-		}
+		//Make sure that all the cards of a type have not been taken - possibly implemented somewhere else
+		// HashSet<Card> unknownCards = new HashSet<Card>();
+		// for (Card otherCard : otherCards) {
+		// 	if (!otherCard.isKnown()) {
+		// 		unknownCards.add(otherCard);
+		// 	}
+		// }
 
 	}
 
-	public void cleanUpSuggestions() {
+	/**
+	 * Removes all blank suggestions from the list of suggestions they player has said yes to
+	**/
+	private void cleanUpSuggestions() {
 		for (int i=0; i<possibleSuggestions.size(); i++) {
 			if (possibleSuggestions.get(i).size() == 0) {
 				possibleSuggestions.remove(i);
@@ -110,7 +139,12 @@ public class Player {
 		}
 	}
 
-	public void checkSuggestion(HashSet<Card> suggestion) {
+	/**
+	 * Checks a suggestion against the cards a player is known to have or not have
+	 * and adds it to the list of suggestions if it is valid
+	 * @param suggestion The suggestion to check and add
+	**/
+	private void checkSuggestion(HashSet<Card> suggestion) {
 		//Filter the suggestion
 		//Check sugestion against cards the player couldn't have
 		HashSet<Card> cardsToRemove = new HashSet<Card>();
@@ -156,21 +190,29 @@ public class Player {
 		}
 	}
 
-	public void addPossibleSuggestion(Suggestion s) {
+	/**
+	 * Adds a suggetion to the list of suggestions the player has said yes to if it may contains
+	 * any new information (the player doesn't have any of the cards)
+	 * @param suggestion The suggestion to add to the list of suggestions
+	**/
+	public void addPossibleSuggestion(Suggestion suggestion) {
 		HashSet<Card> newPossibleSuggestion = new HashSet<Card>();
 		//Check if any of the cards are already known to be possesed by the players
-		if (knownCards.contains(s.getSuspect()) || knownCards.contains(s.getWeapon()) || knownCards.contains(s.getRoom())) {
+		if (knownCards.contains(suggestion.getSuspect()) || knownCards.contains(suggestion.getWeapon())
+				|| knownCards.contains(suggestion.getRoom())) {
 			return; //Nothing new is learned, throw out the suggestion
 		}
-		newPossibleSuggestion.add(s.getRoom());
-		newPossibleSuggestion.add(s.getSuspect());
-		newPossibleSuggestion.add(s.getWeapon());
+		newPossibleSuggestion.add(suggestion.getRoom());
+		newPossibleSuggestion.add(suggestion.getSuspect());
+		newPossibleSuggestion.add(suggestion.getWeapon());
 		checkSuggestion(newPossibleSuggestion);
 
 	}
+
 	@Override
 	public String toString() {
-		String output = String.format("∨∨∨∨vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n\t\033[34m\033[1m%s\033[0m\033[39m\n\n\033[32mKnown cards:\033[39m\n", name);
+		String output = String.format("∨∨∨∨vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n"+
+			"\t\033[34m\033[1m%s\033[0m\033[39m\n\n\033[32mKnown cards:\033[39m\n", name);
 		int index = 1;
 		for (Card c : knownCards) {
 			output += String.format("%d. %s\t", index, c.getDescription());
@@ -212,12 +254,29 @@ public class Player {
 		}
 		return output;
 	}
-	public boolean hasCard(Card c) {
-		return knownCards.contains(c);
+
+	/**
+	 * Whether or not the player is known to possess a specified cardNumber
+	 * @param card The card to check if the player has it
+	 * @return hasCard Boolean value if the player definately has the card
+	**/
+	public boolean hasCard(Card card) {
+		return knownCards.contains(card);
 	}
+
+	/**
+	 * Gives a set of all the cards the player is known to possess in their hand
+	 * @return knownCards Set of all cards known to be in the player's hand
+	**/
 	public HashSet<Card> getKnownCards() {
 		return knownCards;
 	}
+
+	/**
+	 * Gives the status of a card relative to a player. It may be known to be in the player's hand, known not to be in the player's hand,
+	 * be in a suggestion the player has said yes to, or no information about the card being in the player's hand may be available.
+	 * @return status The status of the card relative to the player
+	**/
 	public CardStatus getStatusOfCard(Card c) {
 		if (hasCard(c)) {
 			return CardStatus.KNOWN;
@@ -232,6 +291,11 @@ public class Player {
 			return CardStatus.UNKNOWN;
 		}
 	}
+
+	/**
+	 * Whether or not all cards the player can have are known or not
+	 * @return solved Boolean value of whether all the player's cards are known or not
+	**/
 	public boolean isSolved() {
 		return solved;
 	}
