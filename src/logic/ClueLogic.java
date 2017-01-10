@@ -13,6 +13,8 @@ import java.util.HashSet;
 public class ClueLogic {
 	//Variables
 	ArrayList<Player> players; //List of players in the game
+	ArrayList<Move> moves;
+	ArrayList<Move> startingCards;
 	CardList cards; //List of clue cards
 	private Player solution; //Player represting the envelope/solution
 	private static ClueLogic solver = null; //The singleton
@@ -32,9 +34,73 @@ public class ClueLogic {
 	**/
 	public ClueLogic(ArrayList<Player> players) {
 		this.players = players;
+		moves = new ArrayList<Move>();
+		startingCards = new ArrayList<Move>();
 		cards = CardList.getCardList();
 		solution = new Player("########### Solution ###########", 3);
+		solution.addPossibleSuggestion(new HashSet<Card>(cards.getRooms()));
+		solution.addPossibleSuggestion(new HashSet<Card>(cards.getSuspects()));
+		solution.addPossibleSuggestion(new HashSet<Card>(cards.getWeapons()));
 		solver = this;
+	}
+
+	public boolean doMove(Move move) {
+		switch (move.getType()) {
+			case START_CARD:
+				startingCards.add(move);
+				return addStartCard(move.getNumber());
+			case SUGGESTION:
+				moves.add(move);
+				Suggestion suggestion = move.getSugestion();
+				makeSuggestion(move.getNumber(), suggestion.getRoom(), suggestion.getSuspect(), suggestion.getWeapon(), move.getResolvingPlayer());
+				return true;
+			case ADD_CARD:
+				moves.add(move);
+				return addKnownCard(move.getCard(), move.getPlayer());
+			case UNDO:
+				undo(move.getNumber());
+				return true;
+			default:
+				return false;
+		}
+	}
+
+	public void undo(int moveNumber) {
+		ArrayList<Move> newMoves = new ArrayList<Move>(moves);
+		System.out.println(String.format("Removed %s", moves.get(moveNumber)));
+		try {
+			newMoves.remove(moveNumber);
+
+		} catch (IndexOutOfBoundsException e) {
+			System.out.println("\033[31mError: invalid move\033[39m");
+
+		}
+		clear();
+		for (Move startingCard : startingCards) {
+			addKnownCard(cards.getCard(startingCard.getNumber()), players.get(0));
+		}
+		for (Move move : newMoves) {
+			doMove(move);
+		}
+	}
+
+	public void clear() {
+		for (Player p : players) {
+			p.clear();
+		}
+		cards.resetCards();
+		solution.clear();
+		solution.addPossibleSuggestion(new HashSet<Card>(cards.getRooms()));
+		solution.addPossibleSuggestion(new HashSet<Card>(cards.getSuspects()));
+		solution.addPossibleSuggestion(new HashSet<Card>(cards.getWeapons()));
+		moves.clear();
+	}
+	public ArrayList<String> getMoves() {
+		ArrayList<String> moveDescriptions = new ArrayList<String>();
+		for (Move m : moves) {
+			moveDescriptions.add(m.toString());
+		}
+		return moveDescriptions;
 	}
 
 	/**

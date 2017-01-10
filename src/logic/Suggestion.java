@@ -5,7 +5,7 @@ import src.logic.card.Card;
 /**
  * Represents a suggestion. Used to transfer a suggestion from the client to the ClueSolver
 **/
-class Suggestion {
+public class Suggestion {
 	//Variables
 	private Card room;
 	private Card suspect;
@@ -47,5 +47,10 @@ class Suggestion {
 	**/
 	public Card getWeapon() {
 		return weapon;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%s and %s and %s", room.getDescription(), suspect.getDescription(), weapon.getDescription());
 	}
 }

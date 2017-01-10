@@ -36,30 +36,33 @@ public class CardList {
 		rooms = new ArrayList<Card>();
 		allCards = new ArrayList<Card>();
 		//Import the suspects
-		suspects.add(new Card(CardValue.PLUM, TypeOfCard.SUSPECT, "Professor Plum"));
-		suspects.add(new Card(CardValue.MUSTARD, TypeOfCard.SUSPECT, "Colonel Mustard"));
-		suspects.add(new Card(CardValue.GREEN, TypeOfCard.SUSPECT, "Mr. Green"));
-		suspects.add(new Card(CardValue.SCARLET, TypeOfCard.SUSPECT, "Miss Scarlet"));
-		suspects.add(new Card(CardValue.WHITE, TypeOfCard.SUSPECT, "Ms. White"));
-		suspects.add(new Card(CardValue.PEACOCK, TypeOfCard.SUSPECT, "Mrs. Peacock"));
+		suspects.add(new Card(TypeOfCard.SUSPECT, "Professor Plum")); //1 X
+		suspects.add(new Card(TypeOfCard.SUSPECT, "Colonel Mustard")); //2 X
+		suspects.add(new Card(TypeOfCard.SUSPECT, "Mr. Green")); //3 X
+		suspects.add(new Card(TypeOfCard.SUSPECT, "Miss Scarlet")); //4 X
+		suspects.add(new Card(TypeOfCard.SUSPECT, "Ms. White")); //5 X
+		suspects.add(new Card(TypeOfCard.SUSPECT, "Mrs. Peacock")); //6
 		//Import the weapons
-		weapons.add(new Card(CardValue.KNIFE, TypeOfCard.WEAPON, "Knife"));
-		weapons.add(new Card(CardValue.CANDLESTICK, TypeOfCard.WEAPON, "Candlestick"));
-		weapons.add(new Card(CardValue.REVOLVER, TypeOfCard.WEAPON, "Revolver"));
-		weapons.add(new Card(CardValue.PIPE, TypeOfCard.WEAPON, "Lead Pipe"));
-		weapons.add(new Card(CardValue.ROPE, TypeOfCard.WEAPON, "Rope"));
-		weapons.add(new Card(CardValue.WRENCH, TypeOfCard.WEAPON, "Wrench"));
+		weapons.add(new Card(TypeOfCard.WEAPON, "Bat")); //7 X
+		weapons.add(new Card(TypeOfCard.WEAPON, "Pistol")); //8 X
+		weapons.add(new Card(TypeOfCard.WEAPON, "Knife")); //9 X
+		weapons.add(new Card(TypeOfCard.WEAPON, "Candlestick")); //10 X
+		weapons.add(new Card(TypeOfCard.WEAPON, "Rope")); //11 X
+		weapons.add(new Card(TypeOfCard.WEAPON, "Ax")); //12 X
+		weapons.add(new Card(TypeOfCard.WEAPON, "Dumbbell")); //13 X
+		weapons.add(new Card(TypeOfCard.WEAPON, "Poison")); //14
+		weapons.add(new Card(TypeOfCard.WEAPON, "Trophy")); //15 X
 		//Import the rooms
-		rooms.add(new Card(CardValue.HALL, TypeOfCard.ROOM, "Hall"));
-		rooms.add(new Card(CardValue.CONSERVATORY, TypeOfCard.ROOM, "Conservatory"));
-		rooms.add(new Card(CardValue.DINING_ROOM, TypeOfCard.ROOM, "Dining Room"));
-		rooms.add(new Card(CardValue.KITCHEN, TypeOfCard.ROOM, "Kitchen"));
-		rooms.add(new Card(CardValue.STUDY, TypeOfCard.ROOM, "Study"));
-		rooms.add(new Card(CardValue.LIBRARY, TypeOfCard.ROOM, "Library"));
-		rooms.add(new Card(CardValue.BALLROOM, TypeOfCard.ROOM, "Ballroom"));
-		rooms.add(new Card(CardValue.LOUNGE, TypeOfCard.ROOM, "Lounge"));
-		rooms.add(new Card(CardValue.BILLIARD_ROOM, TypeOfCard.ROOM, "Billiards Room"));
-		//Add all cards to the list of all the cards
+		rooms.add(new Card(TypeOfCard.ROOM, "Guest House")); //16 X
+		rooms.add(new Card(TypeOfCard.ROOM, "Dining Room")); //17 X
+		rooms.add(new Card(TypeOfCard.ROOM, "Kitchen")); //18 X
+		rooms.add(new Card(TypeOfCard.ROOM, "Patio")); //19 X
+		rooms.add(new Card(TypeOfCard.ROOM, "Spa")); //20 X
+		rooms.add(new Card(TypeOfCard.ROOM, "Theater")); //21 X
+		rooms.add(new Card(TypeOfCard.ROOM, "Living Room")); //22
+		rooms.add(new Card(TypeOfCard.ROOM, "Observatory")); //23 X
+		rooms.add(new Card(TypeOfCard.ROOM, "Hall")); //24 X
+		//Add all cards to the list of all the cardsLounge
 		for (Card c : suspects) {
 			allCards.add(c);
 		}
@@ -168,5 +171,14 @@ public class CardList {
 	**/
 	public ArrayList<Card> getSuspects() {
 		return suspects;
+	}
+
+	/**
+	 * Clears the known flag on all cards
+	**/
+	public void resetCards() {
+		for (Card c : allCards) {
+			c.setKnown(false);
+		}
 	}
 }

@@ -6,7 +6,6 @@ package src.logic.card;
 public class Card {
 	//Variables
 	private TypeOfCard cardType; //The type of card (Room, weapon or suspect)
-	private CardValue cardValue; //The value of the card (Knife, rope, etc.)
 	private String description; //A string description of the card
 	private boolean known; //Whether or not the card is known by a player
 
@@ -14,13 +13,11 @@ public class Card {
 
 	/**
 	 * Creates a new cards
-	 * @param cardValue The value of the card (Knife, rope, etc. for a weapon card)
 	 * @param cardType The type of the card (Room, weapon, or suspect)
 	 * @param description A string description of the card, this is what will show up to the user
 	**/
-	public Card(CardValue cardValue, TypeOfCard cardType, String description) {
+	public Card(TypeOfCard cardType, String description) {
 		this.cardType = cardType;
-		this.cardValue = cardValue;
 		this.description = description;
 		known = false;
 	}
@@ -31,17 +28,8 @@ public class Card {
 	**/
 	public Card(Card otherCard) {
 		cardType = otherCard.cardType;
-		cardValue = otherCard.cardValue;
 		description = otherCard.description;
 		known = false;
-	}
-
-	/**
-	 * Gives the value of the card (Knife, rope, etc. for a weapon card)
-	 * @return cardValue The value of the card
-	**/
-	public CardValue getValue() {
-		return cardValue;
 	}
 
 	/**
@@ -68,7 +56,7 @@ public class Card {
 	public boolean equals(Object other) {
 		if (other instanceof Card) {
 			Card otherCard = (Card)other;
-			return otherCard.cardType == cardType && otherCard.cardValue == cardValue && description == otherCard.description;
+			return otherCard.cardType == cardType && description.equals(otherCard.description);
 		}
 		return false;
 	}

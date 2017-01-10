@@ -206,7 +206,37 @@ public class Player {
 		newPossibleSuggestion.add(suggestion.getSuspect());
 		newPossibleSuggestion.add(suggestion.getWeapon());
 		checkSuggestion(newPossibleSuggestion);
+	}
 
+	/**
+	 * Adds a set of cars as a suggestion to the list of suggestions the player has said yes to if it may contains
+	 * any new information (the player doesn't have any of the cards)
+	 * @param suggestion The set of cards to add as a suggestion
+	**/
+	public void addPossibleSuggestion(HashSet<Card> suggestion) {
+		HashSet<Card> extraInfo = new HashSet<Card>();
+		//Check and clean up extra infomation from the suggestion
+		for (Card c : suggestion) {
+			if (knownCards.contains(c)) {
+				return; //Nothing new is learned, the player already has one of the cards
+			} else if (c.isKnown() || cardsNotPossible.contains(c)) {
+				extraInfo.add(c);
+			}
+		}
+		//Remove extra information
+		for (Card c : extraInfo) {
+			suggestion.remove(c);
+		}
+		if (suggestion.size() == 0) {
+			return; //Nothing new is learned, the suggestion did not provide any new information
+		} else if (suggestion.size() == 1) { //Learned something!
+			Card learnedCard = suggestion.iterator().next();
+			ClueLogic.getClueLogic().addKnownCard(learnedCard, this);
+			suggestion.clear();
+		} else { //Add the suggestion to the possible candidates
+			possibleSuggestions.add(suggestion);
+		}
+		cleanUpSuggestions(); //Check other suggestions just in case something else is learned
 	}
 
 	@Override
@@ -214,6 +244,7 @@ public class Player {
 		String output = String.format("∨∨∨∨vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv\n"+
 			"\t\033[34m\033[1m%s\033[0m\033[39m\n\n\033[32mKnown cards:\033[39m\n", name);
 		int index = 1;
+		//Give a list of all known cards
 		for (Card c : knownCards) {
 			output += String.format("%d. %s\t", index, c.getDescription());
 			index++;
@@ -222,12 +253,16 @@ public class Player {
 			output += String.format("%d. Unknown\t", index);
 			index++;
 		}
-		output += "\n\n\033[31mCards not owned:\033[39m\n";
-		index = 1;
-		for (Card c : cardsNotPossible) {
-			output += String.format("%d. %s\t", index, c.getDescription());
-			index++;
+		//Give a list of cards known not to be in the player's hand if all their hand is not known
+		if (!isSolved()) {
+			output += "\n\n\033[31mCards not owned:\033[39m\n";
+			index = 1;
+			for (Card c : cardsNotPossible) {
+				output += String.format("%d. %s\t", index, c.getDescription());
+				index++;
+			}
 		}
+		//Display other information if it is available
 		if (possibleSuggestions.size() != 0) {
 			output += "\n\n\033[33mOther information:\033[39m\n";
 			index = 1;
@@ -298,5 +333,17 @@ public class Player {
 	**/
 	public boolean isSolved() {
 		return solved;
+	}
+
+	public void clear() {
+		knownCards.clear();
+		possibleCards.clear();
+		cardsNotPossible.clear();
+		possibleSuggestions.clear();
+		solved = false;
+		ArrayList<Card> allCards = CardList.getCardList().getCards();
+		for (Card c : allCards) {
+			possibleCards.add(c);
+		}
 	}
 }
